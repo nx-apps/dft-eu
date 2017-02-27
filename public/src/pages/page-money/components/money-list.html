@@ -1,0 +1,125 @@
+
+<link rel="import" href="./../../components/data-manage-behavior.html">
+<link rel="import" href="./../../components/format-number-behavior.html">
+
+<dom-module id="money-list">
+    <template>
+    <style is="custom-style" include="gl-table">
+    *{
+        font-family: 'CSChatThaiUI', sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+    }
+    table{
+        border: 1px solid #ddd;
+    }
+    .gl-table-default > thead > tr > th{
+        text-align: right;
+        white-space: nowrap;
+    }
+    .gl-table-default > tbody > tr > td{
+        text-align: right;
+        white-space: nowrap;
+    }
+    .center{
+        text-align: center !important;
+    }
+    .left{
+        text-align: left !important;
+    }
+    table > tbody > tr{
+        cursor:pointer;
+    }
+
+    </style>
+   
+    <table class="gl-table-default">
+        <thead class="table-head">
+            <tr>
+                <th class="center" rowspan="2">ลำดับที่</th>
+                <th class="center" rowspan="2">ว/ด/ป ที่รับเงิน</th>
+                <th class="center" rowspan="2">เลขที่ใบเสร็จ</th>
+                <th class="center" rowspan="2">บริษัท</th>
+                <th class="center" colspan="2">EC</th>
+                <th rowspan="2">ปริมาณ (ตัน)</th>
+                <th rowspan="2">ราคา/ตัน (*2500)</th>
+                <th class="center" colspan="4">เช็คค่าธรรมเนียม</th>
+                <th rowspan="2">จำนวนเงิน</th>
+                <th rowspan="2">ประเภท</th>
+                <th class="center" rowspan="2">หมายเหตุ</th>
+                <th class="center" rowspan="2">ออกใบเสร็จ</th>
+            </tr>
+            <tr>
+                <th class="center">เลขที่</th>
+                <th class="center">วันที่</th>
+                <th>ธนาคาร</th>
+                <th>สาขา</th>
+                <th class="center">เลขที่</th>
+                <th class="center">วันที่</th>
+            </tr>
+        </thead>
+        <template is="dom-if" if="{{dataStat}}">
+            <tbody>
+                <tr>
+                    <td class="left" colspan="15">ไม่พบข้อมูล</td>
+                </tr>
+            </tbody>
+        </template>
+        <tbody class="table-body">
+            <template is="dom-repeat" items="[[data]]">
+                <tr value="[[item.id]]" on-tap="listReports_Active">
+                    <td class="center">[[num(index)]]</td> <!-- ลำดับที่ -->
+                    <td class="center">[[item.pay_date]]</td><!-- ว/ด/ป ที่รับเงิน -->
+                    <td class="center">[[item.req_number]]</td><!-- เลขที่ใบเสร็จ -->
+                    <td class="center">[[item.exporter_name]]</td><!-- บริษัท -->
+                    <td class="center">[[item.ec_number]]</td><!-- เลขที่ EC -->
+                    <td class="center">[[item.req_date]]</td><!-- วันที่ EC -->
+                    <td>[[formatNumber(item.quantity)]]</td><!-- ปริมาณ (ตัน) -->
+                    <td>[[mathData(item.price,item.quantity)]]</td><!-- ราคา/ตัน (*2500) -->
+                    <td>[[item.bank_name]]</td><!-- ธนาคาร -->
+                    <td>[[item.bank_branch]]</td><!-- สาขา -->
+                    <td class="center">[[item.check_number]]</td><!-- เลขที่ check -->
+                    <td class="center">[[item.pay_date]]</td><!-- วันที่ check -->
+                    <td>[[fillter_list_count(item.total,item.list_count)]]</td><!-- จำนวนเงิน -->
+                    <td class="center">[[item.type_name]]</td>
+                    <td class="center">[[item.note]]</td><!-- หมายเหตุ -->
+                    <td class="center"><iron-icon icon="icons:content-paste"></iron-icon></td>
+                    <!-- ออกใบเสร็จ -->
+                </tr>
+            </template>
+        </tbody>
+    </table>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'money-list',
+            behaviors:[DataManageBehavior,FormatNumberBehavior],
+            observers:['checkData(data)'],
+            _selectData: function(e) {
+                console.log("pageReport:: "+e.currentTarget.data2);
+                this.fire("data-select",e.currentTarget.data2);
+            },
+            num:function(index){
+                return index+1;
+            },
+            mathData:function(price,amount){
+                return this.formatNumber(price*amount);
+            },
+            fillter_list_count:function(total,list){
+                if(list == 1){
+                     return this.formatNumber(total);
+                }
+                else {
+                    return '-'
+                }
+            },
+            listReports_Active:function(e){
+               this.fire('data-select',e.currentTarget.value)
+            //    window.open('/report/receipt.pdf','_blank');
+            },
+            downloadFile:function(){
+               window.open('/report/receipt.pdf','_blank');
+             }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,161 @@
+<link rel="import" href="./../../components/data-manage-behavior.html">
+<link rel="import" href="./../../components/format-number-behavior.html">
+
+
+<dom-module id="fee-list">
+    <template>
+        <style>
+            table,paper-button,paper-checkbox{
+                font-family: 'CSChatThaiUI', sans-serif !important;
+                -webkit-font-smoothing: antialiased;
+            }
+            table{
+                border-collapse: collapse;
+                width: 100%;
+                overflow-x:auto;
+                white-space: nowrap;
+            }
+            table{
+                border: 1px solid #ddd;
+            }
+            th,td{
+                padding: 15px;
+            }
+            th{
+                text-align: center;
+                background-color: #F1F1F1;
+            }
+            td{
+                text-align: center;
+            }
+            tr:hover{
+                background-color: #F1F1F1;
+            }
+            tr[check-group]{
+                color: #B6B6B6;
+            }
+            .right{
+                text-align: right;
+            }
+            /*.activeColor{
+                color : #ddd;
+            }   */
+        </style>
+
+        
+        <table>
+            <tr>
+                <template is="dom-if" if="{{checkBox}}">
+                    <th>เลือก</th>
+                </template>
+                <th>ชื่อฟอร์ม</th>
+                <th>บริษัท</th>
+                <th>เลขที่คำขอ EC</th>
+                <th>เลขที่หนังสือรับรอง</th>
+                <th>วันที่ส่ง</th>
+                <template is="dom-if" if="{{showData}}">
+                     <th class="right">ปริมาณ(ตัน)</th>
+                     <th class="right">ราคาต่อหน่วย</th>
+                     <th class="right">จำนวนเงิน</th>
+                </template>
+                <template is="dom-if" if="{{dataOverplay}}">
+                    <th class="right">ยอดเงินสุทธิ</th>
+                    <th class="right">ยอดเงินที่ใช้</th>
+                    <th class="right">คงเหลือ</th>
+                </template>
+            </tr>
+            <template is="dom-if" if={{dataStat}}>
+                <tr>
+                    <td colspan="10" style="text-align: left">ไม่พบข้อมูล</td>
+                </tr>
+            </template>
+            <template is="dom-if" if={{!dataStat}}>
+                <template is="dom-repeat" items={{data}}>
+                <tr check-group$="[[item.class]]">
+                    <template is="dom-if" if="{{checkBox}}">
+                        <td><paper-checkbox on-tap="getDataCheckBox" value="{{item}}" checked="{{item.check}}" disabled="{{item.hidden}}"></paper-checkbox></td>
+                    </template>
+                    <td>EC ในโควตา EU</td>
+                    <td>[[item.exporter_name]]</td>
+                    <td>[[item.req_number]]</td>
+                    <td>[[item.ec_number]]</td>
+                    <td>[[item.req_date]]</td>
+                    <template is="dom-if" if="{{showData}}">
+                        <td class="right">[[formatNumber(item.quantity)]]</td>                    
+                        <td class="right">[[formatNumber(item.price)]]</td>
+                        <td class="right">[[mathMoney(item.quantity,item.price)]]</td>
+                    </template>
+                    <template is="dom-if" if="{{dataOverplay}}">
+                        <td class="right">[[formatNumber(item.balance)]]</td>
+                        <td class="right">[[formatNumber(item.useBalance)]]</td>
+                        <td class="right">[[formatNumber(item.totalBalance)]]</td>
+                    </template>
+                </tr>
+                </template>
+             </template>
+        </table>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'fee-list',
+            behaviors:[DataManageBehavior,FormatNumberBehavior],
+            observers:['checkData(data)','hiddenCheckBox(data.*)'],
+            properties:{
+                checkBox:{
+                    type: Boolean,
+                    value: false
+                },
+                data:{
+                    observer: 'setDataForCheckBox'
+                }
+            },
+            dataSelected:function(e){
+                this.fire('data-select',e.currentTarget.item);
+            },
+            hiddenCheckBox:function(data){
+                // console.log(data);
+                if(data.value == true){
+                    var dataArray = this.data.filter((item)=>{
+                        return item.check == true;
+                    })
+                    var exporter
+                    dataArray.map((item)=>{
+                        exporter = item.exporter_id;
+                    })
+                    this.data.map((item,index)=>{
+                        if(exporter != item.exporter_id){
+                            this.set('data.'+index+'.hidden',true);
+                            this.set('data.'+index+'.class',true);
+                        }
+                    })
+                    // console.log('<------>',exporter);
+                }
+                else if(data.value == false && typeof this.data != 'undefined'){
+                    // console.log('--->',this.data);
+                    this.data.map((item,index)=>{
+                        this.set('data.'+index+'.hidden',false);
+                        this.set('data.'+index+'.class',false);
+                    })
+                }
+            },
+            mathMoney:function(quantity,price){
+                console.log(quantity,price);
+                var answer = quantity * price;
+                return this.formatNumber(answer)
+            },
+            setDataForCheckBox:function(){
+                this.data.map((item)=>{
+                    item.check = false;
+                    item.hidden = false;
+                    item.class = false;
+                })
+            },
+            getDataCheckBox:function(){  
+                return this.data.filter(function(item){
+                    return item.check == true;
+                });
+            } 
+        });
+    </script>
+</dom-module>

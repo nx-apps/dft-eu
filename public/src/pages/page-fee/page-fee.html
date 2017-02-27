@@ -1,0 +1,281 @@
+<link rel="import" href="./../components/panel-right/panel-right.html">
+<link rel="import" href="./../components/data-manage-behavior.html">
+<link rel="import" href="./../components/format-number-behavior.html">
+<link rel="import" href="./components/fee-list.html">
+<link rel="import" href="./components/fee-manage.html">
+
+
+<dom-module id="page-fee">
+    <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
+        paper-item{
+            font-family: 'CSChatThaiUI', sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+        }
+        .header {
+            padding: 10px 0px 10px 10px;
+            background-color: var(--paper-grey-100);
+            color: var(--paper-grey-600);
+            font-size: var(--font-size-h4);
+            font-family: 'rsuregular', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .registor{
+          margin: 20px;
+        }
+        .title {
+            text-align: center;
+            font-size: var(--font-size-h3);
+            font-family: 'rsuregular', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+         .titleContent{
+            padding: 10px;
+            font-size: 18px;
+            color: white;
+            background-color: orange;
+            font-family: 'rsuregular', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            /*width: 25%;*/
+        }
+        .searchBox{
+          padding: 5px;
+          background-color: var(--gl-gray-lighter-color);
+        }
+        .elevation{
+          border-radius: 5px;
+          margin: 10px;
+          padding: 5px;
+        }
+        .searchBorder{
+          border: 1px solid #ddd;
+          margin: 15px;
+          border-radius: 3px
+        }
+        paper-material {
+          background-color: var(--gl-white-color);
+        }
+        gl-search-input{
+          margin: 30px 0px 0px 0px;
+        }
+       
+        .contentHeader{
+          font-size: 22px;
+          text-align: center;
+        }
+        .container{
+            padding: 10px;
+            font-family: 'rsuregular', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .flex-end-justified {
+            @apply(--layout-horizontal);
+            @apply(--layout-end-justified);
+        }
+        table,paper-button{
+            font-family: 'CSChatThaiUI', sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+    <template>
+        <!-- <paper-material elevation="1" class="elevation"> -->
+        <div class="layout vertical registor">
+          <div class="flex">
+            <div class="layout horizontal end-justified">
+              <!--<paper-button raised class="gl-btn-primary"on-tap="_toggleDrawer" id="addRedRegExporter"><iron-icon icon="add"></iron-icon> เพิ่มทะเบียนผู้ส่งออกข้าว</paper-button>-->
+            </div>
+          </div>
+          <div class="flex title">
+            ชำระเงินค่าธรรมเนียมพิเศษ
+          </div>
+        
+        <div class="flex searchBox searchBorder" style="margin:20px">
+            <!--<div class="titleContent">ค้นหาข้อมูล</div> -->
+            <gl-grid-row width="{{getWidth}}">
+                <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
+                <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
+                    <div>
+                    <gl-combo-box class="saveData" label="ปี" items="{{quotaYear}}" value="{{yearValue}}"
+                    error-message="กรุณาเลือกปี" ></gl-combo-box>
+                    </div>
+                </gl-grid-col>
+                <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+                    <div>
+                        <gl-combo-box class="saveData" label="ชื่อบริษัท" placeholder="จำนวนบริษัท [[getListCompany.length]] รายการ" items="{{getListCompany}}" value="{{selectExporter}}" item-label-path="name" item-value-path="id"
+                        error-message="กรุณาเลือกบริษัท"></gl-combo-box>
+                    </div>
+                </gl-grid-col>
+                <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]" style="margin-top: 10px;">
+                    <paper-button class="gl-btn-primary" on-tap="searchData" raised>ค้นหา</paper-button>
+                </gl-grid-col>
+                <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,1]]"></gl-grid-col>
+            </gl-grid-row>
+        </div>
+
+
+        <div class="flex searchBorder">
+            <div class="titleContent">ข้อมูลรายการ EC</div> 
+            <template is="dom-if" if="{{dataCheck}}">
+                <div style="padding : 20px;">ไม่พบข้อมูล</div>
+            </template>
+            <template is="dom-if" if="{{dataStat}}">
+                <div class="flex" style="margin: 20px">
+                    <div style="overflow-x:auto;">
+                        <fee-list data="{{dataList}}" check-box="true" show-data="true"></fee-list>
+                    </div>
+                </div>
+            </template>
+            <div class="flex-end-justified ">
+                <paper-button class="gl-btn-primary" on-tap="dataSelected" raised>next</paper-button>
+            </div>
+        </div>
+    </div>
+    <panel-right title="พิมพ์ใบเสร็จ">
+           <fee-manage data="[[listSelected]]" list-bank="[[listBank]]"></fee-manage>
+    </panel-right>
+    </template>
+    <script>
+        Polymer({
+            is: "page-fee",
+            listeners:{
+                'save-data': '_saveData'
+            },
+            behaviors:[DataManageBehavior,FormatNumberBehavior,nylonBehavior],
+            observers:['checkData()','_getExporter(yearValue)'],
+            nylonPageActive:function(){
+                this._getYear();
+                this._getBanklist();
+            },
+            _getYear:function(){
+                axios.get('./common/year')
+                .then((response)=>{
+                    console.log("success");
+                    this.quotaYear = response.data.map(item=>{
+                        return item.toString();
+                    });
+                })
+                .catch((error)=>{
+                    console.log("error");
+                    console.log(error.response.data.message);
+                });
+            },
+            _getExporter:function(year){
+                if(year != ''){
+                    this.selectExporter = 'เลือกบริษัทด้วย',
+                    axios.get('./payment/exporterEcList?year='+year)
+                    .then((response)=>{
+                        console.log("success");
+                        console.log(response.data);
+                        this.getListCompany =  response.data;
+                    })
+                    .catch((error)=>{
+                        console.log("error");
+                        console.log(error.response.data.message);
+                    });
+                }
+            },
+            _getBanklist:function(){
+                axios.get('./payment/selectbank')
+                .then((response)=>{
+                    console.log("success");
+                    console.log(response.data);
+                    this.listBank = response.data;
+                })
+                .catch((error)=>{
+                    console.log("error");
+                    console.log(error.response.data.message);
+                    this.fire('toast',{status:'connectError',text:error.message,
+                    callback:function(){
+                    }})
+                });
+            },
+            searchData:function(){
+                if(this.yearValue != ''){
+                    console.log(this.selectExporter);
+                    this.fire('toast',{status:'load'});
+                    var param = '?year='+this.yearValue+'&exporter_id='+this.selectExporter; 
+                    if(this.selectExporter == 'เลือกบริษัทด้วย' || this.selectExporter == ''){
+                        console.log('1234');
+                        param = '?year='+this.yearValue;
+                    }               
+                    axios.get('./payment/reqEcList'+param)
+                    .then((response)=>{
+                        console.log("success");
+                        console.log(response.data);
+                        this.dataList = response.data;
+                        this.fire('toast', {
+                            status: 'success',
+                            callback:()=>{
+                            
+                            }
+                        })
+                    })
+                    .catch((error)=>{
+                        console.log("error");
+                        console.log(error.response.data.message);
+                        this.fire('toast',{status:'connectError',text:error.response.data.msg,
+                        callback:function(){
+                        }})
+                    });
+                }
+            },
+            dataSelected:function(e){
+                var select = this.$$('fee-list').getDataCheckBox();
+                var id = select.map((item)=>{
+                    return item.id; 
+                })
+                var data = {
+                    ec_id : id
+                }
+                console.log(data);
+                this.fire('toast',{status:'load'});
+                axios.post('/payment/paymentDetail',data)
+                .then((response)=>{
+                    console.log(response.data);
+                    this.fire('toast',{
+                        status: 'success',
+                        callback:()=>{
+                            this.listSelected = response.data;  
+                            this.$$('panel-right').open();  
+                        }
+                    })
+                    
+                })
+                .catch((error)=>{
+                    console.log(error.response.data.message);
+                    this.fire('toast',{status:'connectError',text:error.response.data.msg,
+                    callback:function(){
+                    }})
+                })
+                // console.log('dataSelected :',e.detail.id);
+                
+            },
+            _saveData:function(e){
+                e.detail.result.year = parseInt(this.yearValue);
+                this.fire('toast',{status:'load'});
+                axios.post('/payment/receipt',e.detail.result)
+                .then((response)=>{
+                    console.log('success');
+                    console.log(response.data);
+                    this.fire('toast',{
+                        status: 'success',
+                        callback:()=>{
+                            //this.$$('panel-right').close(); 
+                            e.detail.el.receiptId = response.data.receipt_id;
+                            this.searchData();
+                        }
+                    })
+                    
+                })
+                .catch((error)=>{
+                    console.log(error.response.data.message);
+                    this.fire('toast',{status:'connectError',text:error.response.data.msg,
+                    callback:function(){
+                    }})
+                })
+                
+            }
+        });
+    </script>
+</dom-module>
+

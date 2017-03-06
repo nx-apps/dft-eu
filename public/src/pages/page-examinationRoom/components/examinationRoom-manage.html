@@ -1,0 +1,68 @@
+
+<dom-module id="examinationRoom-manage">
+    <template>
+        <style include="gl-size gl-color">
+            .content{
+                padding: 20px;
+            }
+           .flex-equal-justified {
+                @apply(--layout-horizontal);
+                @apply(--layout-justified);
+            }
+        </style>
+        <div class="content">
+            <paper-input label="std_name" value="{{dataSelect.std_name}}"></paper-input>
+            <paper-input label="tel" value="{{dataSelect.tel}}"></paper-input>
+            <paper-input label="email" value="{{dataSelect.email}}"></paper-input>
+            
+            <div class="content flex-equal-justified">
+                <div>
+                    <paper-button class="gl-bg-danger" on-tap="confirmDelete" raised>Delete</paper-button>
+                </div>
+                <div>
+                    <paper-button class="gl-bg-success" on-tap="controller" raised>Save</paper-button>
+                </div>
+                
+            </div>
+        
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'examinationRoom-manage',
+            behaviors: [ReduxBehavior,dispatchActionBehavior],
+            properties:{
+               dataSelect:{
+                    statePath:'examinationRoom.dataSelect'
+                }
+            },
+            controller:function(){
+                if(!this.dataSelect.id){
+                    this.saveData();
+                }
+                else {
+                    this.updateData();
+                }
+            },
+            saveData:function(){
+                this.dispatchAction('EXAMINATION_ROOM_INSERT',this.dataSelect);
+            },
+            updateData:function(){
+                this.dispatchAction('EXAMINATION_ROOM_UPDATE',this.dataSelect);
+            },
+            confirmDelete:function(){
+                this.fire('toast',{ 
+                 status:'openDialog',
+                 text:'ต้องการลบข้อมูลใช่หรือไม่ ?',
+                 confirmed:this.deleteData.bind(this), 
+                 })
+            },
+            deleteData:function(check){
+                if(check == true){
+                     this.dispatchAction('EXAMINATION_ROOM_DELETE',this.dataSelect.id);
+                }
+            }
+  
+        });
+    </script>
+</dom-module>

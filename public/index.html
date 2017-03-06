@@ -5,28 +5,59 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-  <title>ระบบจัดการโควตาข้าวภายใต้โควตาภาษีสหภาพยุโรป</title>
-
-  <link rel="shortcut icon" sizes="32x32" href="/images/app-icon-32.png">
+  <title>BETAGRO</title>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="shortcut icon" sizes="32x32" href="/images/icon/green/app-icon-32.png">
   <link rel="manifest" href="/manifest.json">
-
-  <script>window._start_page='quota';</script>
-
-  <script src="/bower_components/axios/dist/axios.min.js"></script>
+  <link rel="import" href="/api/push/import">
   <script>
-  axios.defaults.baseURL = `http://${window.location.hostname}:3000/api`
-  
+    Polymer = { lazyRegister: true, dom: 'shadow' }
+    //console.log = function(){}
+    function _setCookie(cname, cvalue, exdays) {
+      var d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      var expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function _getCookie(cname) {
+      var name = cname + "=";
+      var decodedCookie = decodeURIComponent(document.cookie);
+      var ca = decodedCookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    function _deleteCookie(name) {
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
   </script>
 
+  <script src="/bundle.js"></script>
+  <link rel="import" href="/bower_components/polymer/polymer.html">
   <link rel="import" href="/src/nylon-app.html" async>
-  
+
   <style>
+    @font-face {
+      font-family: 'CSChatThaiUI';
+      src: url('/bower_components/gl-font/fonts/csChatThai/CSChatThaiUI.ttf');
+    }
+    
     body {
       margin: 0;
+      background: white;
     }
     
     #toolbar {
-      background-color: #f7941e;
+   background-color: #f7941e;
       color: white;
       font-family: 'rsuregular', sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -74,14 +105,39 @@
       display: -webkit-flex;
       display: flex;
     }
+    
+    * {
+      font-family: 'CSChatThaiUI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    #toolbar > .icon {
+      margin-left: 76px;
+      padding-top: 18px;
+      float: left;
+    }
+    
+    #toolbar > .title {
+      line-height: 62px;
+      margin-left: 20px;
+      font-size: 16px;
+      font-weight: 590;
+      float: left;
+    }
   </style>
 
 </head>
 
 <body>
-
   <nylon-app unresolved>
-    <div id="toolbar"></div>
+    <div id="toolbar">
+      <div class="icon">
+        <img src="./../../images/manifest/icon-32.png" alt="">
+      </div>
+      <div class="title">
+        ระบบจัดการโควตาข้าวภายใต้โควตาภาษีสหภาพยุโรป
+      </div>
+    </div>
     <div class="middle">
       <div class="loader"></div>
     </div>
@@ -91,12 +147,10 @@
   <script>
     window.performance && performance.mark && performance.mark('index.html');
 
-    Polymer = {lazyRegister: true, dom: 'shadow'};
-
-    (function() {
+    (function () {
       if ('registerElement' in document
-          && 'import' in document.createElement('link')
-          && 'content' in document.createElement('template')) {
+        && 'import' in document.createElement('link')
+        && 'content' in document.createElement('template')) {
         // platform is good!
       } else {
         // polyfill the platform!

@@ -1,13 +1,32 @@
 <script>
     nylonBehavior = {
-        observers:['_checkPageActive(path,currentPath)'],
-        _checkPageActive:function(route,currentRoute){
-            if(route==currentRoute){
+        properties:{
+            nylonShow:{
+                value:true,
+                reflectToAttribute: true
+            },
+            visible:{
+                type:Boolean,
+                observer:'_checkVisible'
+            }
+        },
+        _checkVisible:function(ob){
+            if(ob){
                 if(typeof this.nylonPageActive != "undefined"){
                     this.nylonPageActive();
                 }
+            }else{
+                if(typeof this.nylonPageUnActive != "undefined"){
+                    this.nylonPageUnActive();
+                }
+                //this.nylonVisible(false);
             }
+
+        },
+        nylonVisible:function(b=true){
+            this.nylonShow = b;
         }
+
     };
 
     nylonLocalize = {

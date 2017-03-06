@@ -1,0 +1,51 @@
+<link rel="import" href="./../components/panel-right/panel-right.html">
+<link rel="import" href="./components/examinationRoom-list.html">
+<link rel="import" href="./components/examinationRoom-manage.html">
+
+
+<dom-module id="page-examinationRoom">
+	<template>
+		<style is="custom-style" include="page-style flex-style">
+		</style>
+
+		<div class="xcontainer">
+			<div class="header gl-large">
+				จัดการข้อมูล 
+			</div>
+			
+			
+			<paper-fab icon="add" on-tap="_insertData"></paper-fab>
+			<div class="container">
+				<examinationRoom-list data="{{dataList}}" on-data-select="_onDataSelect"></examinationRoom-list>
+			</div>
+		<panel-right title="จัดการข้อมูล" set-width="70%">
+				<examinationRoom-manage name="[[name]]" status="[[status]]"></examinationRoom-manage>
+		</panel-right>
+	</template>
+	<script>
+    Polymer({
+      is: 'page-examinationRoom',
+      behaviors: [nylonBehavior,examinationRoomAction],
+			listeners:{
+				'select-data' : '_selectData',
+				'close' : '_close'
+			},
+			_close:function(){
+				// console.log('1234');
+				this.$$('panel-right').close();
+			},
+			_insertData:function(){
+				this.status = 'insert';
+				this.EXAMINATION_ROOM_CLEAR_DATA_SELECT();
+				this.$$('panel-right').open();
+			},
+			_selectData:function(e){
+				// console.log(e.detail);
+				this.name = e.detail;
+				this.status = 'update'
+				this.$$('panel-right').open();
+			}
+			
+    });
+  </script>
+</dom-module>

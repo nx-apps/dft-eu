@@ -3,7 +3,7 @@
 
 <dom-module id="quota-manage">
 	<template>
-		<style is="custom-style" include="iron-flex iron-flex-alignment gl-color gl-size gl-table">
+		<style is="custom-style" include="flex-style gl-color gl-size gl-table">
 			.title {
 				background-color: orange;
 				padding: 8px 10px 8px 10px;
@@ -74,16 +74,16 @@
 						<gl-grid-row width="{{getWidth}}">
 							<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
 							<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-								<gl-form-input label="ปีโควตา" class="saveData left" allowed-pattern="[0-9]" error-message="กรุณาใสปีโควตา" required placeholder="ใส่ปีโควตา" value="{{year}}"
+								<gl-form-input label="ปีโควตา" class="saveData left" allowed-pattern="[0-9]" error-message="กรุณาใสปีโควตา" required placeholder="ใส่ปีโควตา" value="{{data.year}}"
 									id="" name="" disabled$="{{checkStatus(status)}}"> 
                                 </gl-form-input>
 							</gl-grid-col>
 							<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-                                <gl-combo-box class="saveData" label="ประเภทข้าว" items="{{getTypeRice}}" value="{{typeRice}}" placeholder="กรุณาเลือกประเภทข้าว"
+                                <gl-combo-box class="saveData" label="ประเภทข้าว" items="{{typeRice}}" value="{{data.type_rice_id}}" placeholder="กรุณาเลือกประเภทข้าว"
                                 item-label-path="type_rice_name_th" item-value-path="id" error-message="กรุณาเลือกประเภทข้าว" required></gl-combo-box>
 							</gl-grid-col>
 							<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-								<gl-form-input class="mathData saveData" id="sum" label="ยอดรวม" allowed-pattern="[0-9||,||.]" format-number="on" value="[[sum]]" always-float-label auto-validate error-message="กรุณาใสจำนวน" required>
+								<gl-form-input class="mathData saveData" id="sum" label="ยอดรวม" allowed-pattern="[0-9||,||.]" format-number="on" value="{{data.amount}}" always-float-label auto-validate error-message="กรุณาใสจำนวน" required>
                                      <div class="font" suffix>&nbsp;ตัน</div>
                                 </gl-form-input>
 							</gl-grid-col>
@@ -131,7 +131,7 @@
 								</tr>
                                 </thead>
                                 <tbody>
-								<template is="dom-repeat" items="{{quantity}}">
+								<template is="dom-repeat" items="{{data.quantity}}">
 									<tr>
 										<td>งวดที่ : {{getIndex(index)}}</td>
                                         <td>
@@ -203,6 +203,7 @@
         Polymer({
             is: 'quota-manage',
             behaviors: [
+                ReduxBehavior,
                 FormatNumberBehavior,
                 MonthBehavior
             ],
@@ -216,14 +217,16 @@
                     value: '2559'
                 },
                 data:{
-                    type: Object,
-                    observer: '_getData'
+                    statePath:'quota.dataSelect',
+                },
+                typeRice:{
+                    statePath:'commonSystem.typeRice'
                 }
             },
             ready:function(){
                 document.xxx = this;
                 console.log(this.quantity,'c')
-                this._getTypeRice();
+                // this._getTypeRice();
                 this.period = 1;
             },
             getIndex:function(index){
@@ -236,7 +239,7 @@
             },
             _addPeriod:function(){
                 // console.log(this.quantity);
-                this.push('quantity',{percent:'',weigth:''});
+                this.push('data.quantity',{percent:'',weigth:''});
             },
             _confirmDelPeriod:function(e){
                 this.fire('toast',{
@@ -250,7 +253,7 @@
             _delPeriod:function(resalut,detail){
                 console.log(resalut,detail.data);
                 if(resalut==true){
-                    detail.el.splice('quantity', detail.el.quantity.indexOf(detail.data),1);
+                    detail.el.splice('data.quantity', detail.el.quantity.indexOf(detail.data),1);
                 }
             },
             _mathProportion:function(percent,item){
@@ -357,28 +360,28 @@
                 }
             },
             _getData:function(data){
-                //console.log(data);
-                Polymer.dom(this.root).querySelectorAll('.mathData').map((item)=>{
-                    item.reset();
-                });
                 console.log(data);
-                this.quantity = data.quantity;
-                this.year = data.year;
-                this.sum = data.amount;
-                this.typeRice = data.type_rice_id;
+                // Polymer.dom(this.root).querySelectorAll('.mathData').map((item)=>{
+                //     item.reset();
+                // });
+                // console.log(data);
+                // this.quantity = data.quantity;
+                // this.year = data.year;
+                // this.sum = data.amount;
+                // this.typeRice = data.type_rice_id;
             },
-            _getTypeRice:function(){
-                axios.get('./common/type_rice')
-                .then((response)=>{
-                    //console.log("success!!");
-                    //console.log(response.data);
-                    this.getTypeRice = response.data;
-                })
-                .catch((error)=>{
-                    console.log("error");
-                    console.log(error);
-                });
-            },
+            // _getTypeRice:function(){
+            //     axios.get('./common/type_rice')
+            //     .then((response)=>{
+            //         //console.log("success!!");
+            //         //console.log(response.data);
+            //         this.getTypeRice = response.data;
+            //     })
+            //     .catch((error)=>{
+            //         console.log("error");
+            //         console.log(error);
+            //     });
+            // },
             _deleteData:function(){
                 // console.log(this.$$('gl-combo-box').value);
                 if(this.$$('gl-combo-box').value != ''){

@@ -13,7 +13,7 @@ export function quotaReducer(state = initialState,action){
             return Object.assign({},state,{dataList:action.payload});
         case 'QUOTA_SELECT':
             return Object.assign({},state,{dataSelect:action.payload});
-        case 'QUOTA_CLEAR_DATA_SELECT':
+        case 'QUOTA_CLEAR_QUOTA_SELECT':
             return Object.assign({},state,{dataSelect:{}});
         default:
             return state
@@ -43,6 +43,7 @@ export function quotaAction(store){
             },
             QUOTA_SELECT:function(id){
                 // console.log(id);
+               
                 this.fire('toast',{status:'load'});
                 axios.get('./quota/quota/id/'+id)
                 .then((response)=>{
@@ -58,6 +59,9 @@ export function quotaAction(store){
                     console.log('error');
                     console.log(error);
                 });
+            },
+            QUOTA_CLEAR_QUOTA_SELECT:function(){
+                store.dispatch({type:'QUOTA_CLEAR_QUOTA_SELECT'})
             }
             // QUOTA_CLEAR_DATA_SELECT:function(){
             //     store.dispatch({type:'QUOTA_CLEAR_DATA_SELECT'});

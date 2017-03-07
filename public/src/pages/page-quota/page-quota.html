@@ -4,141 +4,69 @@
 
 <dom-module id="page-quota">
 	<template>
-		<style is="custom-style" include="gl-size gl-color gl-table">
-			* {
-				font-family: 'rsuregular', sans-serif;
-				-webkit-font-smoothing: antialiased;
-			}
-			
-			.header {
-				padding: 10px 0px 10px 10px;
-				background-color: var(--paper-grey-100);
-				color: var(--paper-grey-600);
-				font-size: var(--font-size-h4);
-				font-family: 'rsuregular', sans-serif;
-				-webkit-font-smoothing: antialiased;
-			}
-			
-			.registor {
-				margin: 20px;
-			}
-			
-			.title {
-				text-align: center;
-				font-size: var(--font-size-h3);
-				font-family: 'rsuregular', sans-serif;
-				-webkit-font-smoothing: antialiased;
-        padding: 10px;
-			}
-			
-			.searchBox {
-				padding: 5px;
-				background-color: var(--gl-gray-lighter-color);
-			}
-			
-			.elevation {
-				border-radius: 5px;
-				margin: 10px;
-				padding: 5px;
-			}
-			
-			.searchBorder {
-				border: 1px solid var(--gl-gray-light-color);
-				margin: 15px;
-				border-radius: 3px
-			}
-			
-			paper-material {
-				background-color: var(--gl-white-color);
-			}
-			
-			gl-search-input {
-				margin: 30px 0px 0px 0px;
-			}
-			
-			.container {
-				padding : 10px;
-			}
-      .font{
-        font-family: 'CSChatThaiUI', sans-serif !important;
-        -webkit-font-smoothing: antialiased;
-      }
-      .flex-equal-justified {
-        @apply(--layout-horizontal);
-        @apply(--layout-justified);
-      }
+		<style is="custom-style" include="flex-style page-style">
 		</style>
-
-		<div class="layout vertical registor">
-
-			<div class="flex">
-				<div class="layout horizontal">
-				
+		<div class="container">
+			<div class="content title fontRSU">
+				รายการจัดสรรปีโควตา
+			</div>
+			<div class="content layout horizontal">
+				<div class="flex-equal-justified">
+					<div>
+						<vaadin-combo-box label="แสดงข้อมูลรายปี" items="[[yearList]]" value="{{selectYear}}"></vaadin-combo-box>
+					</div>
+					<div>
+						<paper-button raised class="font gl-btn-primary" on-tap="addQuota" id="addRedRegExporter">
+							<iron-icon icon="add"></iron-icon> เพิ่มโควตา</paper-button>
+					</div>
 				</div>
 			</div>
-
-			<div class="flex title">
-				รายการจัดสรรปีโควตา 
-       
+			<div class="content">
+				<paper-material elevation="1">
+						<quota-list></quota-list>
+				</paper-material>
 			</div>
-
-			<div class="layout horizontal">
-        <div class="container flex-equal-justified">
-          <div> <gl-combo-box label="แสดงข้อมูลรายปี" items="{{yearList}}" value="{{selectYear}}"></gl-combo-box></div>
-          <div>	<paper-button raised class="font gl-btn-primary" on-tap="addQuota" id="addRedRegExporter">
-          <iron-icon icon="add"></iron-icon> เพิ่มโควตา</paper-button></div>
-        </div>
-			</div>
-
-			<div class="container">
-				<quota-list></quota-list>
-			</div>
-
+			<panel-right title="การกำหนดปีโควตา">
+				<template is="dom-if" if="[[rendered]]">
+						<quota-manage></quota-manage>
+				</template>
+			</panel-right>
 		</div>
-
-		<panel-right title="การกำหนดปีโควตา">
-      <template is="dom-if" if="[[rendered]]">
-        <quota-manage></quota-manage>
-      </template>
-		</panel-right>
 	</template>
 	<script>
-    Polymer({
-      is: 'page-quota',
-			observers:['getSelectQuotaYear(selectYear)'],
-      behaviors: [nylonBehavior,ReduxBehavior,commonSystemAction,quotaAction],
-      properties: {
-        yearList:{
-          statePath:'commonSystem.quotaYear'
-        }
-      },
-      nylonPageActive:function(){
-        this.COMMON_QUOTA_YEAR();
+		Polymer({
+			is: 'page-quota',
+			observers: ['getSelectQuotaYear(selectYear)'],
+			behaviors: [nylonBehavior, ReduxBehavior, commonSystemAction, quotaAction],
+			properties: {
+				yearList: {
+					statePath: 'commonSystem.quotaYear'
+				}
+			},
+			nylonPageActive: function () {
+				this.COMMON_QUOTA_YEAR();
 				this.COMMON_TYPE_RICE();
-        // this._getYear();
-      },
-      attached: function(){
-        this.layerContent = "addRedRegExporter";
-        //this.textToast = 'โหลดข้อมูลสำเร็จ';
-
-
-        Polymer.RenderStatus.afterNextRender(this,function(){
-          this.importHref(this.resolveUrl('./components/quota-manage.html'), (e)=>{
-              this.rendered = true;
-          }, (e)=> {
-              console.log('error')
-          });
-        });
-      },
-			getSelectQuotaYear:function(year){
-				if(year != ''){
+			},
+			attached: function () {
+				this.layerContent = "addRedRegExporter";
+				Polymer.RenderStatus.afterNextRender(this, function () {
+					this.importHref(this.resolveUrl('./components/quota-manage.html'), (e) => {
+						this.rendered = true;
+					}, (e) => {
+						console.log('error')
+					});
+				});
+			},
+			getSelectQuotaYear: function (year) {
+				if (year != '') {
 					this.QUOTA_GET_QUOTA_LIST(year);
 				}
 			},
-			addQuota:function(){
+			addQuota: function () {
+				this.QUOTA_CLEAR_QUOTA_SELECT();
 				this.$$('panel-right').open();
 			}
-  
-    });
-  </script>
+
+		});
+	</script>
 </dom-module>

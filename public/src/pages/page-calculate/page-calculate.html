@@ -1,0 +1,129 @@
+
+<link rel="import" href="./../components/panel-right/panel-right.html">
+<link rel="import" href="./components/calculate-list.html">
+<!--<link rel="import" href="./components/calculate-listQuota.html">-->
+
+<dom-module id="page-calculate">
+    <style is="custom-style" include="gl-size gl-color">
+        * {
+            font-family: 'rsuregular', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+          padding: 10px 0px 10px 10px;
+          background-color: var(--paper-grey-100);
+          color: var(--paper-grey-600);
+          font-size: var(--font-size-h4);
+          font-family: 'rsuregular', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .registor{
+          margin: 20px;
+        }
+        .title {
+          text-align: center;
+           font-size: var(--font-size-h3);
+           font-family: 'rsuregular', sans-serif;
+             -webkit-font-smoothing: antialiased;
+        }
+        .searchBox{
+          padding: 5px;
+          background-color: var(--gl-gray-lighter-color);
+        }
+        .elevation{
+          border-radius: 5px;
+          margin: 10px;
+          padding: 5px;
+        }
+        .searchBorder{
+          border: 1px solid var(--gl-gray-light-color);
+          margin: 15px;
+          border-radius: 3px;
+        }
+        paper-material {
+          background-color: var(--gl-white-color);
+        }
+        gl-search-input{
+          margin: 30px 0px 0px 0px;
+        }
+
+
+        .container{
+          margin-left: 30px;
+        }
+
+        
+        .fontContent{
+          font-size: 20px;
+          /*text-decoration: blink;*/
+          padding: 15px;
+          margin-top: 10px;
+          text-align: center;
+          margin-bottom: 10px;
+          /*background-color: var(--gl-gray-lighter-color);*/
+        }
+        paper-button{
+          font-family: 'CSChatThaiUI', sans-serif !important;
+          -webkit-font-smoothing: antialiased;
+        }
+        .flex-equal-justified {
+          @apply(--layout-horizontal);
+          @apply(--layout-justified);
+        }
+    </style>
+    <template>
+
+      <grid>
+        <div class="layout vertical registor">
+          <div class="flex">
+            <div class="layout horizontal end-justified">
+              <!--<paper-button hidden="{{hide}}" raised class="gl-btn-primary"on-tap="_toggleDrawer" id="addRedRegExporter">ตั้งค่าการคำนวณโควตา</paper-button>-->
+            </div>
+          </div>
+          <div class="flex title">
+            <!--{{localize('test')}} <button on-tap="changeLanguage">{{localize('change')}}</button>-->
+            <br>การคำนวณส่วนจัดสรร
+          </div>
+          <div class="fontContent">
+              การคำนวณส่วนจัดสรรข้าวภายใต้โควตาภาษีสหภาพยุโรป
+          </div>
+          <div class="layout horizontal">
+            <div class="container flex-equal-justified">
+              <div><gl-combo-box label="แสดงข้อมูลรายปี" items="{{getYear}}" value="{{selectYear}}"></gl-combo-box></div>
+              <div><paper-button hidden="{{hide}}" raised class="gl-btn-primary"on-tap="_toggleDrawer" id="addRedRegExporter"> 
+              <iron-icon icon="settings"></iron-icon>&nbsp;ตั้งค่า</paper-button></div>
+
+            </div>
+          </div>
+          
+          <div style="overflow-x:auto; padding:20px;">
+            <calculate-list list-data="{{dataList}}" on-setting-data="_toggleDrawer" on-data-select="_onDataSelect"></calculate-list>
+          </div>
+        </div>
+        <!-- </paper-material> -->
+
+        <div class="layout horizontal end-justified" style="padding: 0px 20px 0px 0px">
+          <!--<paper-button raised class="gl-btn-primary">ดำเนินการคำนวณโควตา</paper-button>-->
+        </div>
+
+      </grid>
+      <panel-right title="การคำนวณส่วนจัดสรร" set-width="85%">
+          <template is="dom-if" if="[[rendered]]">
+            <iron-pages selected="{{pageSelect}}">
+              <div><calculate-setting quota-year="{{sendQuotaYear}}" on-post-sum="_postSumData" on-post-data="_postData" sum-answer="{{answerSum}}"></calculate-setting></div>
+              <div><calculate-listQuota data="{{dataListQuota}}" on-update-data-list="_updateDataList" on-save-data="_saveData" on-delete-data="_confirmData"></calculate-listQuota></div>
+            </iron-pages>
+          </template>
+      </panel-right>
+  
+    </template>
+    <script>
+        Polymer({
+            is: "page-calculate",
+            behaviors:[nylonBehavior,nylonLocalizeBehavior],
+            
+
+        });
+    </script>
+</dom-module>

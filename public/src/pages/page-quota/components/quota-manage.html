@@ -133,26 +133,22 @@
                                 <tbody>
 								<template is="dom-repeat" items="{{data.quantity}}">
 									<tr>
-										<td>งวดที่ : {{getIndex(index)}}</td>
+										<td>งวดที่ :{{count(index)}}</td>
                                         <td>
                                          <gl-combo-box label="" class="saveData" style="margin-top: -21px;" items="{{getMonth()}}" value="{{item.month}}"
                                          item-label-path="name" item-value-path="id" error-message="กรุณาเลือกเดือน" required></gl-combo-box>
                                         </td>
-										<!--{{item.proportion}}-->
 										<td>
-											[[testNum(item.*,'percent')]]
-                                            [[testNum(item.*,'weigth')]]
-                                            [[testNum(item.*,'month')]]
 											<gl-form-input label="" class="mathData number saveData" maxlength="3"  allowed-pattern="[0-9]" error-message="กรุณาใสจำนวน" value="{{item.percent}}" required no-label-float>
                                                 <div suffix>&nbsp;%</div>
                                             </gl-form-input>
 										</td>
 										<td>
-											<gl-form-input label="" class="saveData" value="[[item.weigth]]" format-number="on" on-input="updateWeight"
+											<gl-form-input label="" class="saveData" value="{{item.weigth}}" format-number="on" on-input="weightUpdate"
 												index="{{index}}" required id="{{index}}" allowed-pattern="[0-9||,||.]" error-message="กรุณาใสจำนวน" no-label-float></gl-form-input>
 										</td>
 										<td>
-											<paper-button on-tap="_confirmDelPeriod" item="{{item}}">
+											<paper-button on-tap="_delPeriod" index="[[index]]" item="{{item}}">
 												<iron-icon icon="delete"></iron-icon>
 											</paper-button>
 										</td>
@@ -170,11 +166,11 @@
                                  </tbody>
                                 <thead>
 								<tr>
-									<th colspan="2">ปริมาณโควตารวม : {{_crossCheck(quantity.*)}} ตัน</th>
+									<th colspan="2">ปริมาณโควตารวม :{{mathQuantity(data.quantity.*)}} ตัน</th>
                                     <th></th>
                                     <th></th>
 									<th>
-										<paper-button hidden$="{{hide}}" raised class="gl-btn-primary" on-tap="_mathData">คำนวณ</paper-button>
+										<paper-button hidden$="{{hide}}" raised class="gl-btn-primary" on-tap="_math">คำนวณ</paper-button>
 									</th>
 								</tr>
                                 </thead>
@@ -187,11 +183,11 @@
             <section>
                 <div class="horizontal flex-equal-justified">
                     <div style="margin-left:10px;">
-                        <paper-button hidden$="{{!checkStatus(status)}}" on-tap="_deleteData" raised><iron-icon icon="delete"></iron-icon>&nbsp;ลบปีโควตา</paper-button>
+                        <paper-button hidden$="{{!checkStatus(status)}}" on-tap="_confirmedDel"><iron-icon icon="delete"></iron-icon>&nbsp;ลบปีโควตา</paper-button>
                     </div>
                     <div style="margin-right:10px;">
                         <paper-button class="gl-btn-danger" hidden$="{{checkStatus(status)}}" on-tap="confirmClose" raised>ยกเลิก</paper-button>
-                        <paper-button class="gl-btn-success" on-tap="_saveData" raised>บันทึก</paper-button>
+                        <paper-button class="gl-btn-success" on-tap="getForm" raised>บันทึก</paper-button>
                     </div>
                     
                 </div>
@@ -207,216 +203,136 @@
                 FormatNumberBehavior,
                 MonthBehavior
             ],
-            properties: {
-                quantity: {
-                    type: Array,
-                    value: []
-                },
-                year:{
-                    type: String,
-                    value: '2559'
-                },
+            properties:{
                 data:{
-                    statePath:'quota.dataSelect',
+                    statePath:'quota.dataSelect'
                 },
                 typeRice:{
                     statePath:'commonSystem.typeRice'
                 }
             },
-            ready:function(){
-                document.xxx = this;
-                console.log(this.quantity,'c')
-                // this._getTypeRice();
-                this.period = 1;
+            count:function(index){
+                return index+1;
             },
-            getIndex:function(index){
-                this.period++;
-                this.set('quantity.'+index+'.period', parseInt(index)+1);
-                return parseInt(index)+1;
+            weightUpdate:function(){
+                this.weightStatus = true;
             },
-            updateWeight:function(e){
-                this.set('quantity.'+e.target.index+'.weigth', this.unFormat(e.target.value));
-            },
-            _addPeriod:function(){
-                // console.log(this.quantity);
-                this.push('data.quantity',{percent:'',weigth:''});
-            },
-            _confirmDelPeriod:function(e){
-                this.fire('toast',{
-                    status:'openDialog',
-                    text:'ต้องการลบงวดใช่หรือไม่ ?',
-                    confirmed:this._delPeriod,
-                    el: this,
-                    data:e.currentTarget.item
+            // quantity function 
+            _addPeriod:function(){ 
+                console.log(this.data.quantity);
+                this.push('data.quantity',{
+                    period:'',
+                    month:'',
+                    percent:'',
+                    weigth:'',
+
                 })
             },
-            _delPeriod:function(resalut,detail){
-                console.log(resalut,detail.data);
-                if(resalut==true){
-                    detail.el.splice('data.quantity', detail.el.quantity.indexOf(detail.data),1);
+            _delPeriod:function(e){
+                var index = e.currentTarget.index;
+                this.splice('data.quantity',index,1);
+            },
+            //  math function
+            _math:function(){
+                if(typeof this.data.amount == 'undefined' || this.data.amount == ''){
+                    this.fire('toast',{status:'error',text:'แจ้งเตือน : กรุณาระบุยอดรวม !!',
+                      callback:()=>{}
+                     });
+                    Polymer.dom(this.root).querySelectorAll('.mathData').map((item)=>{
+                        item.validate();
+                    })
+                }
+                else if(this.data.quantity.length == 0){
+                    this.fire('toast',{status:'warning',text:'แจ้งเตือน : กรุณาเพิ่มงวด !!',
+                      callback:function(){
+                      }
+                    });
+                }
+                else {  
+                    this.data.quantity.map((item)=>{
+                        if(item.weigth == "" || typeof item.weigth == "undefined"){
+                            this._mathWeigth();
+                        }
+                        else if(item.percent == "" || typeof item.percent == "undefined"){
+                            this._mathPercent();
+                        }
+                        else {
+                            if(this.weightStatus == true){
+                                this._mathPercent();
+                                this.weightStatus = false;
+                            }else {
+                                this._mathWeigth();
+                            }
+                           
+                        }
+                    })
                 }
             },
-            _mathProportion:function(percent,item){
-                item.weigth = (parseFloat(this.sum)*parseFloat(percent))/100;
-                //console.log(parseFloat(item.quantity));
-                return parseFloat(item.weigth);
-            },
-            _crossCheck:function(data){
-                var sum = 0;
-                data.base.map((item)=>{
-                if(typeof item.weigth!="undefined"){
-                    sum += this.unFormat(item.weigth);
-                }
-                });
-                return this.formatNumber(sum);
-            },
-            // inputProportionChange:function(e){
-            //     this.set('Period.'+e.target.index+'.quantity',parseFloat(e.target.value));
-            // },
-            _mathData:function(){
-                // if(this.Period == ''){
-                //      this.fire('toast',
-                //         {
-                //             status:'connectError',
-                //             text:'กรุณาเพิ่มงวด',
-                //             callback:function(){
-                //             }
-                //         });
-                // }   
-                this.$$('.mathData').validate();
-                var stat = Polymer.dom(this.root).querySelectorAll('.mathData').map((item)=>{
-                    return  item.validate();
-                });
-                var chkStat = function(stat){
-                    return stat == true
-                };
-                if(stat.every(chkStat) == true){
-                    var sum =  this.$$('#sum').value;            
-                    this.quantity.map((data,i)=>{
-                    this.set('quantity.'+ i +'.weigth',(parseFloat(this.unFormat(sum))*parseFloat(data.percent))/100);
+            _mathWeigth:function(){
+                this.data.quantity.map((item,index)=>{
+                    item.weigth = parseFloat(this.unFormat(this.data.amount)*parseFloat(item.percent))/100;
+                    this.set('data.quantity.'+index+'.weigth',item.weigth);
                 })
-                }
-              
             },
-            _saveData:function(){
-                var stat = Polymer.dom(this.root).querySelectorAll('.saveData').map((item)=>{
-                    return  item.validate();
-                });
-                var chkStat = function(stat){
-                    return stat == true
-                };
-                if(this.quantity == ""){
-                    this.fire('toast',
-                        {
-                            status:'connectError',
-                            text:'กรุณาเพิ่มงวด',
-                            callback:function(){
-                            }
-                        });
-                }
-                else if(stat.every(chkStat) == true){
-                    var amount = this.$$('#sum').value; 
-                    var datas = {
-                        year:parseInt(this.year),
-                        amount:parseInt(this.unFormat(amount)),
-                        quantity:this.quantity,
-                        type_rice_id:this.typeRice,   
-                    }
-                    console.log(datas);
-                    var num = 0;
-                    this.quantity.map((item)=>{
-                        num += item.percent;
-                    });
-                    if(num == 100){
-                        if(this.status == 'post')
-                            this.fire('post-data',datas); 
-                        else if (this.status == 'update'){
-                            datas.id = this.data.quota_id;
-                            this.fire('put-data',datas); 
-                        }    
-                    }
-                    else {
-                        this.fire('toast',
-                        {
-                            status:'connectError',
-                            text:'ผลรวมของสัดส่วนต้องได้ 100% เท่านั้น',
-                            callback:function(){
-                            }
-                        });
-                    }
-                  
-                }
+            _mathPercent:function(){
+                this.data.quantity.map((item,index)=>{
+                    var amount = this.unFormat(this.data.amount);
+                    var weigth = parseFloat(this.unFormat(item.weigth));
+                    item.percent = (weigth*100)/amount;
+                    this.set('data.quantity.'+index+'.percent',item.percent);
+                })
             },
-            testNum:function(ob,param){
-                //console.log(typeof ob.value);
-                if(typeof ob.value == "string"){
-                    var pathChange = ob.path.split(".");
-                    if(pathChange.length == 2){
-                        if(pathChange[1]==param){
-                        ob.base[param]=parseFloat(ob.value);
-                        // console.log(typeof ob.value);
+            mathQuantity:function(data){
+                var num = 0;
+                if(data.base.length != 0){
+                    this.data.quantity.map((item)=>{
+                        if(item.weigth != '' && typeof item.weigth != 'undefined'){
+                            num += parseInt(item.weigth);
                         }
-                    }
+                    })
                 }
+                // if(isNaN(num) == true) num = 0;
+                return this.formatNumber(num).toString();
             },
-            _getData:function(data){
-                console.log(data);
-                // Polymer.dom(this.root).querySelectorAll('.mathData').map((item)=>{
-                //     item.reset();
-                // });
-                // console.log(data);
-                // this.quantity = data.quantity;
-                // this.year = data.year;
-                // this.sum = data.amount;
-                // this.typeRice = data.type_rice_id;
-            },
-            // _getTypeRice:function(){
-            //     axios.get('./common/type_rice')
-            //     .then((response)=>{
-            //         //console.log("success!!");
-            //         //console.log(response.data);
-            //         this.getTypeRice = response.data;
-            //     })
-            //     .catch((error)=>{
-            //         console.log("error");
-            //         console.log(error);
-            //     });
-            // },
-            _deleteData:function(){
-                // console.log(this.$$('gl-combo-box').value);
-                if(this.$$('gl-combo-box').value != ''){
-                    data = this.data.quota_id;
-                    this.fire('delete-data',data);
-                }
-                else {
-                    this.$$('gl-combo-box').validate();
-                    this.fire('toast',
-                    {
-                        status:'connectError',
-                        text:'กรุณาเลือกประเภทข้าว',
-                        callback:function(){
+            getForm:function(){
+                var newData = {
+                    amount : this.unFormat(this.data.amount),
+                    year : parseInt(this.data.year),
+                    type_rice_id : this.data.type_rice_id,
+                    quantity : this.data.quantity.map((item)=>{
+                        var newItem = {
+                            month : parseInt(item.month),
+                            percent : parseInt(item.percent),
+                            period : i++,
+                            weigth : parseFloat(item.weigth)
                         }
-                    });
+                        return newItem;
+                    })
                 }
-               
+                if(typeof this.data.id == 'undefined'){
+                    this.dispatchAction('QUOTA_INSERT',newData);
+                }
+                else{
+                    newData.id = this.data.id;
+                    this.dispatchAction('QUOTA_UPDATE',newData);
+                }        
             },
-            checkStatus:function(status){
-                console.log(status);
-                 Polymer.dom(this.root).querySelectorAll('.saveData').map((item)=>{
-                    item.reset();
-                });
-                return status=='update';
+            _confirmedDel:function(){
+                if(typeof this.data.id != 'undefined'){
+                    this.fire('toast',{ 
+                    status:'dialog',
+                    text:'ต้องการลบข้อมูลใช่หรือไม่ ?',
+                    confirmed:this.delData.bind(this), 
+                    })
+                }
             },
-            confirmClose:function(){
-                this.fire('cancel-data');
-            },
-            _resetData:function(){
-                 Polymer.dom(this.root).querySelectorAll('.saveData').map((item)=>{
-                    item.value = '';
-                    item.reset();
-                });
-                this.quantity = [];
+            delData:function(check){
+                if(check == true){
+                    this.dispatchAction('QUOTA_DELETE',this.data)
+                }
             }
+
+
         });
     </script>
 </dom-module>

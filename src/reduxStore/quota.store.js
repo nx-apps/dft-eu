@@ -3,7 +3,9 @@ import {commonAction} from '../config'
 
 const initialState = {
     dataList:[],
-    dataSelect:{}
+    dataSelect:{
+        quantity:[]
+    }
 }
 
 export function quotaReducer(state = initialState,action){
@@ -14,7 +16,11 @@ export function quotaReducer(state = initialState,action){
         case 'QUOTA_SELECT':
             return Object.assign({},state,{dataSelect:action.payload});
         case 'QUOTA_CLEAR_QUOTA_SELECT':
-            return Object.assign({},state,{dataSelect:{}});
+            return Object.assign({},state,{
+                dataSelect:{
+                    quantity:[]
+                }
+            });
         default:
             return state
     }
@@ -32,7 +38,9 @@ export function quotaAction(store){
                 .then((response)=>{
                     store.dispatch({type:'QUOTA_GET_QUOTA_LIST',payload:response.data});
                     this.fire('toast',{status:'success',
-                      callback:function(){
+                      callback:()=>{
+                          this.nylonPageActive();
+                          this.$$('panel-right').close();
                       }
                      });
                 })
@@ -62,75 +70,45 @@ export function quotaAction(store){
             },
             QUOTA_CLEAR_QUOTA_SELECT:function(){
                 store.dispatch({type:'QUOTA_CLEAR_QUOTA_SELECT'})
+            },
+            QUOTA_INSERT:function(data){
+                var year = data.year.toString();
+                axios.post('./quota/quota',data)
+                .then((response)=>{
+                    this.$$('vaadin-combo-box').value = year;
+                    this.QUOTA_GET_QUOTA_LIST(year);
+                })
+                .catch((error)=>{
+                    console.log('error');
+                    console.log(error);
+                });
+            },
+            QUOTA_UPDATE:function(data){
+                var year = data.year.toString();
+                axios.put('./quota/quota',data)
+                .then((response)=>{
+                    this.$$('vaadin-combo-box').value = year;
+                    this.QUOTA_GET_QUOTA_LIST(year);
+                })
+                .catch((error)=>{
+                    console.log('error');
+                    console.log(error);
+                });
+            },
+            QUOTA_DELETE:function(data){
+                var year = data.year.toString();
+                var id = data.id;
+                axios.delete('./quota/quota/'+id)
+                .then((response)=>{
+                    this.$$('vaadin-combo-box').value = year;
+                    this.QUOTA_GET_QUOTA_LIST(year);
+                })
+                .catch((error)=>{
+                    console.log('error');
+                    console.log(error);
+                });
             }
-            // QUOTA_CLEAR_DATA_SELECT:function(){
-            //     store.dispatch({type:'QUOTA_CLEAR_DATA_SELECT'});
-            // },
-            // QUOTA_GET_LIST:function(){
-            //     axios.get('./student/student')
-            //     .then((response)=>{
-            //         console.log(response.data);
-            //         store.dispatch({type:'QUOTA_GET_LIST',payload:response.data});
-            //     })
-            //     .catch((error)=>{
-            //         console.log(error);
-            //     })
-            // },
-            // QUOTA_INSERT:function(data){
-            //     this.fire('toast',{status:'load'});
-            //     axios.post('./student/student',data)
-            //     .then((response)=>{
-            //         console.log('success!!');
-            //         this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',
-            //           callback:()=>{
-            //                 this.QUOTA_GET_LIST();
-            //           }
-            //          });
-            //     })
-            //     .catch((error)=>{
-            //         console.log('error');
-            //         console.log(error.message);
-            //         this.fire('toast',{status:'connectError',text:error.msg,
-            //         callback:function(){
-            //         }})
-            //     });
-            // },
-            // QUOTA_UPDATE:function(data){
-            //     this.fire('toast',{status:'load'});
-            //     axios.put('./student/student',data)
-            //     .then((response)=>{
-            //         console.log('success!!');
-            //         this.fire('toast',{status:'success',text:'แก้ไขสำเร็จ',
-            //          callback:()=>{
-            //               this.QUOTA_GET_LIST();
-            //          }
-            //         });
-            //     })
-            //     .catch((error)=>{
-            //         console.log('error');
-            //         console.log(error);
-            //         this.fire('toast',{status:'connectError',text:error.msg,
-            //         callback:function(){
-            //         }})
-            //     });
-            // },
-            // QUOTA_DELETE:function(id){
-            //     this.fire('toast',{status:'load'});
-            //     axios.delete('./student/student?id='+id)
-            //     .then((response)=>{
-            //         console.log('success!!');
-            //         console.log(response.data);
-            //         this.fire('toast',{status:'success',text:'ลบข้อมูลสำเร็จ',
-            //         callback:()=>{
-            //               this.QUOTA_GET_LIST();
-            //          }
-            //         });
-            //     })
-            //     .catch((error)=>{
-            //         console.log('error');
-            //         console.log(error);
-            //     });
-            // }
+            
         }
     ]
 

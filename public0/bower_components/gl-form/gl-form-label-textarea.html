@@ -1,0 +1,59 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
+<link rel="import" href="../gl-font/gl-cschatthai-font.html">
+<dom-module id="gl-form-label-textarea">
+    <style is="custom-style">
+        paper-material{
+            padding: 15px;
+        }
+       paper-textarea{
+          --paper-input-container-disabled:{
+              opacity: 1;
+          }
+          --paper-input-container-underline:{
+              display: none;
+          } 
+          --paper-input-container-label:{
+              font-size:var(--gl-fontsize-label);
+              font-size: 22px;
+              font-family: 'rsuregular';
+              font-weight: bold;
+          }
+          --paper-input-container-input:{
+              font-family: 'CSChatThaiUI', sans-serif !important;
+              -webkit-font-smoothing: antialiased;
+          }
+       }
+    </style>
+    
+     <template>
+
+        <paper-textarea label="{{label}}" value="{{value}}" disabled></paper-textarea>
+
+     </template>
+
+  <script>
+      
+        Polymer({
+        is:'gl-form-label-textarea',
+        properties:{
+            label:{
+                type:String,
+                value:'Title'
+            },
+            value:{
+                type:String,
+                value:'Text'
+            },
+            fontSizeLabel:{
+                type:String,
+                value:'red'
+            },
+        },
+        ready:function(){
+            this.customStyle['--gl-fontsize-label'] = this.fontSizeLabel;
+        }
+    });
+      
+  </script>
+</dom-module>

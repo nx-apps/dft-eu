@@ -1,0 +1,83 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<script src="./../bower_components/numeral/min/numeral.min.js"></script>
+<link rel="import" href="../bower_components/gl-font/gl-cschatthai-font.html">
+<!--<link rel="stylesheet" href="../font/rsu/stylesheet.css">-->
+<dom-module id="gl-form-label-input">
+    <style>
+        paper-material{
+            padding: 15px;
+        }
+       paper-input{
+          --paper-input-container-disabled:{
+              opacity: 1;
+          }
+          --paper-input-container-underline:{
+              display: none;
+          }
+          --paper-input-container-label:{
+              font-size:var(--gl-fontsize-label);
+              font-size: 22px;
+              font-family: 'rsuregular';
+              font-weight: bold;
+          }
+          --paper-input-container-input:{
+             font-family: 'CSChatThaiUI', sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+          }
+       }
+    </style>
+    
+     <template>
+         <div class="font">
+             <paper-input class="font" label="{{label}}" value="{{data}}" disabled></paper-input>
+         </div>
+        
+     </template>
+ 
+  <script>
+      
+      Polymer({
+        is:'gl-form-label-input',
+        properties:{
+            label:{
+                type:String,
+                value:'Title'
+            },
+            formatNumber:{
+                type:String,
+                value: 'off',
+                observer: '_obFormatNumber'
+            },
+            setFormatNumber:{
+                type: String,
+                value: '0,0.00'
+            },
+            fontSizeLabel:{
+                type:String,
+                value:'18px'
+            },
+            value:{
+                type:String,
+                observer:'obValue'
+            }
+        },
+        _obFormatNumber:function(){
+            this.formatNumber = true;
+        },
+        obValue:function(newValue,o){
+          if(this.formatNumber == ""){
+              //this.data = parseFloat(newValue).toLocaleString();
+              this.data = numeral(newValue).format(this.setFormatNumber);
+          }
+          else{
+               this.data = newValue;
+          }
+          this.customStyle['--gl-fontsize-label'] = this.fontSizeLabel;
+        },
+        reset:function(){
+            this.value = '';
+        }
+      })
+  </script>
+</dom-module>

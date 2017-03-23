@@ -1,0 +1,19 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/nylon-app.html",
+  "fragments": [
+    "src/pages/page-login/page-login.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "lint": {
+    "rules": ["polymer-2-hybrid"]
+  }
+}

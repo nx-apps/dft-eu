@@ -1,0 +1,13 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="layout-main">
+    <template>
+        <slot></slot>
+    </template>
+    <script>
+        class LayoutMain extends Polymer.Element {
+            static get is() { return 'layout-main'; }
+        }
+        window.customElements.define(LayoutMain.is, LayoutMain);
+    </script>
+</dom-module>

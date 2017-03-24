@@ -60,16 +60,16 @@ function build() {
         return waitFor(buildStream);
       })
 
-      // .then(() => {
-      //   // Okay, now let's generate the Service Worker
-      //   console.log('Generating the Service Worker...');
-      //   return polymerBuild.addServiceWorker({
-      //     project: polymerProject,
-      //     buildRoot: buildDirectory,
-      //     bundled: true,
-      //     swPrecacheConfig: swPrecacheConfig
-      //   });
-      // })
+      .then(() => {
+        // Okay, now let's generate the Service Worker
+        console.log('Generating the Service Worker...');
+        return polymerBuild.addServiceWorker({
+          project: polymerProject,
+          buildRoot: buildDirectory,
+          bundled: true,
+          swPrecacheConfig: swPrecacheConfig
+        });
+      })
 
       .then(() => {
         // You did it!

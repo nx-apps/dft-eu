@@ -58,13 +58,13 @@
   version "2.0.29"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
 
-"@types/node@*", "@types/node@^4.0.30", "@types/node@^4.2.3":
-  version "4.2.4"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-4.2.4.tgz#4024bbd6e5000e9fef6db3333042112a2d82247c"
-
-"@types/node@6.0.*", "@types/node@^6.0.0", "@types/node@^6.0.41":
+"@types/node@*", "@types/node@6.0.*", "@types/node@^6.0.0", "@types/node@^6.0.41":
   version "6.0.66"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.66.tgz#5680b74a6135d33d4c00447e7c3dc691a4601625"
+
+"@types/node@^4.0.30", "@types/node@^4.2.3":
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-4.2.4.tgz#4024bbd6e5000e9fef6db3333042112a2d82247c"
 
 "@types/parse5@^0.0.31":
   version "0.0.31"
@@ -3744,13 +3744,13 @@ semver-truncate@^1.0.0:
   dependencies:
     semver "^5.3.0"
 
-"semver@2 || 3 || 4 || 5", semver@^5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
-
-semver@^4.0.3, semver@^4.2.0:
+"semver@2 || 3 || 4 || 5", semver@^4.0.3, semver@^4.2.0:
   version "4.3.6"
   resolved "https://registry.yarnpkg.com/semver/-/semver-4.3.6.tgz#300bc6e0e86374f7ba61068b5b1ecd57fc6532da"
+
+semver@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
 
 sentence-case@^1.1.1, sentence-case@^1.1.2:
   version "1.1.3"

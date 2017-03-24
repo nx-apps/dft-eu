@@ -3,7 +3,9 @@ const gulpif = require('gulp-if');
 const uglify = require('gulp-uglify');
 const cssSlam = require('css-slam').gulp;
 const htmlMinifier = require('gulp-html-minifier');
+const imagemin = require('gulp-imagemin');
 const mergeStream = require('merge-stream');
+const babel = require('gulp-babel');
 const del = require('del');
 
 const { PolymerProject, HtmlSplitter, forkStream } = require('polymer-build');
@@ -28,7 +30,23 @@ function build() {
         .then(()=>{
             console.log(`Deleting ${buildDirectory} directory...`);
 
-            const buildStream = mergeStream(project.sources(), project.dependencies())
+            let sourcesStream = project.sources()
+            .pipe(sourcesHtmlSplitter.split())
+            //.pipe(gulpif(/\.js$/,babel({presets: ['es2015']})))
+            //.pipe(gulpif(/\.js$/, uglify()))
+            .pipe(gulpif(/\.html$/, htmlMinifier()))
+            .pipe(gulpif(/\.(png|gif|jpg|svg)$/, imagemin()))
+            .pipe(sourcesHtmlSplitter.rejoin());
+
+            let dependenciesStream = project.dependencies()
+            .pipe(sourcesHtmlSplitter.split())
+            //.pipe(gulpif(/\.js$/,babel({presets: ['es2015']})))
+            //.pipe(gulpif(/\.js$/, uglify()))
+            .pipe(gulpif(/\.html$/, htmlMinifier()))
+            .pipe(gulpif(/\.(png|gif|jpg|svg)$/, imagemin()))
+            .pipe(sourcesHtmlSplitter.rejoin());
+
+            const buildStream = mergeStream(sourcesStream, dependenciesStream)
             .once('data', () => {
                 console.log('Analyzing build dependencies...');
             });
@@ -41,7 +59,6 @@ function build() {
             
         })
         .then(() => {
-            // You did it!
             console.log('Build complete!');
             resolve();
         });

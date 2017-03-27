@@ -1,0 +1,69 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+
+<dom-module id="layout-main-drawer">
+    <template>
+        <style is="custom-style">
+           /**{
+            font-family: 'rsuregular', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            }*/
+            app-toolbar{
+                color: white;
+                background-color: orange;
+                font-size: 22px;
+                /*user-drag: none; 
+                user-select: none;
+                -moz-user-select: none;
+                -webkit-user-drag: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;*/
+            }
+            iron-image,iron-icon{
+                padding-right: 10px;
+            }
+            paper-icon-item:hover{
+                background-color: #F1F1F1;
+                cursor:pointer;
+                font-weight:bold;
+            }
+            paper-icon-item>div{
+                position: absolute;
+                top: 4px;
+                right: 10px;
+            }
+
+            paper-icon-item[selected]{
+                background-color: #DDD;
+            }
+        </style>
+
+        <div class="menu">
+            <app-toolbar>
+                <iron-image src="../../images/manifest/icon-32.png"></iron-image>
+                <!--<iron-icon icon="home" item-icon></iron-icon>-->
+                Menu
+                </app-toolbar>
+            <div role="listbox">
+                    
+                    <!--<template is="dom-repeat" items="{{listMenu}}">
+                            <paper-icon-item on-tap="selectPage" path$="{{item.path}}" focused  index="{{index}}" selected$="{{_checkSelect(path,item.path)}}">
+                                <iron-icon icon="chevron-right" item-icon></iron-icon>
+                                {{item.name}}
+                                <div hidden$="{{!item.loading}}">
+                                    <paper-spinner active></paper-spinner>
+                                </div>
+                            </paper-icon-item>
+                    </template>-->
+                    
+				</div>
+			</div>
+    </template>
+    <script>
+        class LayoutMainDrawer extends Polymer.Element {
+            static get is() { return 'layout-main-drawer'; }
+        }
+        window.customElements.define(LayoutMainDrawer.is, LayoutMainDrawer);
+    </script>
+</dom-module>

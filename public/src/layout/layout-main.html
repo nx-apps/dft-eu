@@ -1,8 +1,78 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+<link rel="import" href="./layout-main-toolbar.html">
+
 
 <dom-module id="layout-main">
     <template>
+        <style is="custom-style">
+            #drawer{
+                z-index: 2;
+                --app-drawer-width: 400px;
+            }
+            .offline{
+                position:fixed;
+                top:0;
+                right:0;
+                width:100%;
+                height:100%;
+                background-color:#000;
+                z-index:10;
+                
+                opacity: 0.7;
+                filter: alpha(opacity=70);
+            }
+
+            .offline>.flex-container{
+                display: -webkit-flex;
+                display: flex;
+                width:100%;
+                height:100%;
+            }
+
+            .offline>.flex-container>.flex-item {
+                margin: auto;
+                color:#FFF;
+                text-align:center;
+                font-size:1.5em;
+                font-family: 'rsuregular', sans-serif;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            [blur]{
+                -webkit-filter: blur(0.5px);
+                -moz-filter: blur(0.5px);
+                -o-filter: blur(0.5px);
+                -ms-filter: blur(0.5px);
+                filter: blur(0.5px);
+            }
+
+            .xcontainer{
+                margin:auto;
+            }
+
+            @media screen and (min-width: 1275px) {
+                .xcontainer {
+                    width:80%;
+                }
+            }
+        </style>
+
+        <app-drawer id="drawer">
+            <layout-main-drawer path="{{path}}" on-toggle-drawer="_toggleDrawer"  on-open-drawer="_openDrawer" on-close-drawer="_closeDrawer"></layout-main-drawer>
+		</app-drawer>
+
+		<app-header-layout style="z-index:1;">
+			<app-header fixed condenses effects="waterfall">
+				<layout-main-toolbar on-toggle-drawer="_toggleDrawer" on-open-drawer="_openDrawer" on-close-drawer="_closeDrawer"></layout-main-toolbar>
+			</app-header>
+		</app-header-layout>
+
         <slot></slot>
+
     </template>
     <script>
         class LayoutMain extends Polymer.Element {

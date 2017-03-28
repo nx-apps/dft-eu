@@ -45,6 +45,12 @@
     <script>
         class LayoutMainToolbar extends Polymer.Element {
             static get is() { return 'layout-main-toolbar'; }
+
+			toggleDrawer(){
+				console.log('toggleDrawer')
+				this.dispatchEvent(new CustomEvent('toggle-drawer', {detail: {kicked: true}}));
+            }
+
         }
         window.customElements.define(LayoutMainToolbar.is, LayoutMainToolbar);
     </script>

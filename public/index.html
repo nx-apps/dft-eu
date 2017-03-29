@@ -54,6 +54,18 @@
 
     <!-- Add any global styles for body, document, etc. -->
     <style>
+      @font-face {
+          font-family: CSChatThaiUI;
+          src: url('fonts/CSChatThaiUI.eot');
+          src: url('fonts/CSChatThaiUI.eot?#iefix') format('eot'),
+              url('fonts/CSChatThaiUI.woff') format('woff'),
+              url('fonts/CSChatThaiUI.ttf') format('truetype'),
+              url('fonts/CSChatThaiUI.svg') format('svg');
+      }
+      .test{
+        font-family: CSChatThaiUI;
+      }
+
       body {
         margin: 0;
         font-family: 'Roboto', 'Noto', sans-serif;
@@ -64,7 +76,9 @@
     </style>
   </head>
   <body>
+  
     <nylon-app></nylon-app>
+    <div class="test">test ทดสอบ</div>
     <!-- Built with love using Polymer Starter Kit -->
   </body>
 </html>

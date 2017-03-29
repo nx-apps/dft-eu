@@ -7,7 +7,8 @@
   "sources": [
     "src/**/*",
     "images/**/*",
-    "bower.json"
+    "bower.json",
+    "fonts/**/*"
   ],
   "extraDependencies": [
     "manifest.json",

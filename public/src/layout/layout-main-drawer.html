@@ -1,15 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="./shared-styles.html">
 
 <dom-module id="layout-main-drawer">
     <template>
-        <style is="custom-style">
-           /**{
-            font-family: 'rsuregular', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            }*/
-            app-toolbar{
+        <style include="shared-styles">
+            app-toolbar {
                 color: white;
                 background-color: orange;
                 font-size: 22px;
@@ -20,49 +21,114 @@
                 -webkit-user-select: none;
                 -ms-user-select: none;*/
             }
-            iron-image,iron-icon{
+            
+            iron-image,
+            iron-icon {
                 padding-right: 10px;
             }
-            paper-icon-item:hover{
-                background-color: #F1F1F1;
-                cursor:pointer;
-                font-weight:bold;
+            paper-icon-item{
+                margin-left: -50px
             }
-            paper-icon-item>div{
+            paper-icon-item:hover {
+                background-color: #F1F1F1;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            
+            paper-icon-item>div {
                 position: absolute;
                 top: 4px;
                 right: 10px;
             }
-
-            paper-icon-item[selected]{
+            
+            paper-icon-item[selected] {
                 background-color: #DDD;
             }
         </style>
 
         <div class="menu">
             <app-toolbar>
-                <iron-image src="../../images/manifest/eu/icon-32.png"></iron-image>
-                <!--<iron-icon icon="home" item-icon></iron-icon>-->
+                <iron-image src="../../images/manifest/eu/icon-48x48.png"></iron-image>
                 Menu
-                </app-toolbar>
+            </app-toolbar>
             <div role="listbox">
-                    
-                    <!--<template is="dom-repeat" items="{{listMenu}}">
-                            <paper-icon-item on-tap="selectPage" path$="{{item.path}}" focused  index="{{index}}" selected$="{{_checkSelect(path,item.path)}}">
-                                <iron-icon icon="chevron-right" item-icon></iron-icon>
-                                {{item.name}}
-                                <div hidden$="{{!item.loading}}">
-                                    <paper-spinner active></paper-spinner>
-                                </div>
-                            </paper-icon-item>
-                    </template>-->
-                    
-				</div>
-			</div>
+                <template is="dom-repeat" items="[[listMenu]]">
+                    <paper-icon-item on-tap="selectPage" path$="[[item.path]]" focused  index="{{index}}" selected$="{{_checkSelect(path,item.path)}}">
+                        <iron-icon icon="chevron-right" item-icon></iron-icon>
+                        [[item.name]]
+                        <div hidden$="[[!item.loading]]">
+                            <paper-spinner active></paper-spinner>
+                        </div>
+                    </paper-icon-item>
+                </template>
+            </div>
+
+        </div>
     </template>
     <script>
         class LayoutMainDrawer extends Polymer.Element {
             static get is() { return 'layout-main-drawer'; }
+            static get properties() {
+                return {
+                    listMenu: {
+                        type: Array,
+                        value: [
+                            {
+                                name: 'รายการจัดสรรปีโควตา',
+                                path: '/quota'
+                            },
+                            {
+                                name: 'การคำนวณส่วนจัดสรร',
+                                path: '/calculate'
+                            },
+                            {
+                                name: 'ปริมาณส่วนจัดสรรข้าวภายใต้โควตา',
+                                path: '/amount'
+                            },
+                            {
+                                name: 'ออกประกาศ',
+                                path: '/notice'
+                            },
+                            {
+                                name: 'ยืนยันส่วนจัดสรร',
+                                path: '/confirm'
+                            },
+                            {
+                                name: 'รับชำระเงินและออกใบเสร็จ',
+                                path: '/fee'
+                            },
+                            {
+                                name: 'รายงานการรับเงินค่าธรรมเนียมพิเศษ',
+                                path: '/money'
+                            },
+                            {
+                                name: 'รายงานการส่งออกข้าว',
+                                path: '/report'
+                            },
+                            {
+                                name: 'รายงานสถานะ',
+                                path: '/status'
+                            },
+                            {
+                                name: 'ออกรายงาน',
+                                path: '/reports'
+                            },
+                            {
+                                name: 'จัดการผู้ส่งออก',
+                                path: '/exporter'
+                            },
+                            {
+                                name: 'จัดการประเภทข้าว',
+                                path: '/rice'
+                            }
+                        ]
+                    }
+                }
+            }
+
+            _checkSelect(route, itemRoute) {
+                return (route == itemRoute.split('/')[1]);
+            }
         }
         window.customElements.define(LayoutMainDrawer.is, LayoutMainDrawer);
     </script>

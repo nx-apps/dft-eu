@@ -1,12 +1,28 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../layout/shared-styles.html">
 
 <dom-module id="page-login">
     <template>
-        login
+        <style include="shared-styles">  
+        </style>
+        <div>
+            login ลงชื่อเข้าใช้ ทดสอบ
+        </div>
+        ทดสอบ
+        
     </template>
     <script>
         class PageLogin extends Polymer.Element {
             static get is() { return 'page-login'; }
+            connectedCallback(){
+                super.connectedCallback();
+                // Polymer.RenderStatus.afterNextRender(this, () => {
+                //     this.dispatchEvent(new CustomEvent('stop-progress', {
+                //         bubbles: true,
+                //         composed: true
+                //     }));
+                // });
+            }
         }
         window.customElements.define(PageLogin.is, PageLogin);
     </script>

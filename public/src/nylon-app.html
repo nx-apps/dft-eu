@@ -9,7 +9,7 @@
   <template>
     <app-location route="{{route}}"></app-location>
     <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
-    <nylon-init page="[[page]]"></nylon-init>
+    <nylon-init progress="[[progress]]" page="[[page]]"></nylon-init>
   </template>
   <script>
     class NylonApp extends Polymer.Element {
@@ -35,10 +35,15 @@
         _pageChanged(page) {
             var resolvedPageUrl = this.resolveUrl('./pages/page-'+page+'/page-'+page+'.html');
             //console.log(resolvedPageUrl);
+            this.progress = true;
             Polymer.importHref(
                 resolvedPageUrl,
-                null,
-                null,
+                ()=>{
+                    this.progress = false;
+                },
+                ()=>{
+                    this.progress = false;
+                },
                 true
             );
         }

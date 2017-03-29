@@ -67,7 +67,7 @@
 
 		<app-header-layout style="z-index:1;">
 			<app-header fixed condenses effects="waterfall">
-				<layout-main-toolbar id="xyesy"></layout-main-toolbar>
+				<layout-main-toolbar></layout-main-toolbar>
 			</app-header>
 		</app-header-layout>
 
@@ -76,16 +76,11 @@
     <script>
         class LayoutMain extends Polymer.Element {
             static get is() { return 'layout-main'; }
-            connectedCalreadylback() {
-                super.connectedCallback();
-                conaole.log('ddd')
-                console.log(this.$.xyesy);
-                // this.$.xyesy.addEventListener('toggle-drawer', ()=>{
-                //     console.log('ddd')
-                // });
-            }
-            test(){
-                console.log('s');
+            ready() {
+                super.ready();
+                this.addEventListener('open-drawer', (e)=>{
+                    this.$.drawer.open();
+                });
             }
         }
         window.customElements.define(LayoutMain.is, LayoutMain);

@@ -36,8 +36,8 @@
 			}
         </style>
         <app-toolbar>
-            <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
-            <iron-image src="../../images/manifest/icon-48x48.png"></iron-image>
+            <paper-icon-button icon="menu" on-tap="openDrawer"></paper-icon-button>
+            <iron-image src="../../images/manifest/eu/icon-48x48.png"></iron-image>
             <div main-title>ระบบจัดการโควตาข้าวภายใต้โควตาภาษีสหภาพยุโรป<br></div>
         </app-toolbar>
 
@@ -46,9 +46,11 @@
         class LayoutMainToolbar extends Polymer.Element {
             static get is() { return 'layout-main-toolbar'; }
 
-			toggleDrawer(){
-				console.log('toggleDrawer')
-				this.dispatchEvent(new CustomEvent('toggle-drawer', {detail: {kicked: true}}));
+			openDrawer(){
+				this.dispatchEvent(new CustomEvent('open-drawer', {
+					bubbles: true,
+					composed: true
+				}));
             }
 
         }

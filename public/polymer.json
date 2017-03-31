@@ -12,9 +12,10 @@
   ],
   "extraDependencies": [
     "manifest.json",
-    "bower_components/webcomponentsjs/webcomponents-loader.js"
+    "bower_components/webcomponentsjs/webcomponents-loader.js",
+    "bower_components/webcomponentsjs/webcomponents-lite.js.map"
   ],
-  "builds": [{
+  "builds_bak": [{
     "name": "builds",
     "bundle": true,
     "js": {
@@ -23,5 +24,12 @@
     },
     "css": {"minify": true},
     "html": {"minify": true}
+  }],
+  "builds": [{
+    "name": "builds",
+    "bundle": true,
+    "js": {
+      "compile": true
+    }
   }]
 }

@@ -25,6 +25,7 @@
     "gulp-imagemin": "^3.1.0",
     "gulp-uglify": "^2.1.2",
     "merge-stream": "^1.0.0",
+    "node-static": "^0.7.9",
     "polymer-build": "next"
   }
 }

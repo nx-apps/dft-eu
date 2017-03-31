@@ -6,12 +6,12 @@
 
 <link rel="import" href="./layout-main-toolbar.html">
 <link rel="import" href="./layout-main-drawer.html">
-
+<link rel="import" href="./shared-styles.html">
 
 
 <dom-module id="layout-main">
     <template>
-        <style is="custom-style">
+        <style include="shared-styles">
             #drawer{
                 z-index: 2;
                 --app-drawer-width: 400px;
